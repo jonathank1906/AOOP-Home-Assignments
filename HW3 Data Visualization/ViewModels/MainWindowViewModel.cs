@@ -26,6 +26,8 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly Stack<Action> _undoStack = new();
     private readonly Stack<Action> _redoStack = new();
 
+    private bool _lastOperationWasUndo = false;
+
     public MainWindowViewModel()
     {
         _csvService = new CsvService();
@@ -64,8 +66,13 @@ public partial class MainWindowViewModel : ViewModelBase
         // Push the new undo action onto the stack
         _undoStack.Push(undoAction);
 
-        // Clear the redo stack only when a new action is performed
-        _redoStack.Clear();
+        // Clear the redo stack only when a new action is performed after an undo
+        if (!_lastOperationWasUndo)
+        {
+            _redoStack.Clear();
+        }
+
+        _lastOperationWasUndo = false;
     }
 
     private void AddToRedoStack(Action redoAction)
@@ -110,6 +117,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
             // Execute the undo action
             undoAction.Invoke();
+
+            _lastOperationWasUndo = true;
         }
     }
 
@@ -122,6 +131,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
             // Execute the redo action
             redoAction.Invoke();
+
+            _lastOperationWasUndo = false;
         }
     }
 

@@ -11,7 +11,8 @@
     d:DesignWidth="1000"
     x:DataType="vm:MainWindowViewModel"
     Icon="/Assets/app-icon.ico"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    WindowState="Maximized">
 
     <Grid ColumnDefinitions="250, *" RowDefinitions="*">
 
