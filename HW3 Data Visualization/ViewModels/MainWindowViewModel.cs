@@ -3,9 +3,10 @@ using System.Collections.ObjectModel;
 using HW3_Data_Visualization.Models;
 using HW3_Data_Visualization.Services;
 using LiveChartsCore.SkiaSharpView;
-using SkiaSharp;
 using System.Linq;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.Generic;
+using System;
 
 namespace HW3_Data_Visualization.ViewModels
 {
@@ -19,6 +20,12 @@ namespace HW3_Data_Visualization.ViewModels
 
         public IRelayCommand<ChartViewModelBase> RemoveChartCommand { get; }
 
+        public IRelayCommand UndoCommand { get; }
+        public IRelayCommand RedoCommand { get; }
+
+        private readonly Stack<Action> _undoStack = new();
+        private readonly Stack<Action> _redoStack = new();
+
         public MainWindowViewModel()
         {
             _csvService = new CsvService();
@@ -29,9 +36,13 @@ namespace HW3_Data_Visualization.ViewModels
             {
                 if (chart != null)
                 {
-                    Charts.Remove(chart);
+                    RemoveChart(chart);
                 }
             });
+
+            // Initialize Undo and Redo commands (always enabled)
+            UndoCommand = new RelayCommand(Undo);
+            RedoCommand = new RelayCommand(Redo);
         }
 
         private void LoadCsvData()
@@ -41,14 +52,81 @@ namespace HW3_Data_Visualization.ViewModels
             FoodWasteRecords = new ObservableCollection<FoodWasteData>(data);
         }
 
+        private void AddToUndoStack(Action undoAction)
+        {
+            // Push the new undo action onto the stack
+            _undoStack.Push(undoAction);
+
+            // Clear the redo stack only when a new action is performed
+            _redoStack.Clear();
+        }
+
+        private void AddToRedoStack(Action redoAction)
+        {
+            _redoStack.Push(redoAction);
+        }
+
+        public void AddChart(ChartViewModelBase chart)
+        {
+            Charts.Add(chart);
+
+            // Store the undo action to remove the chart
+            AddToUndoStack(() =>
+            {
+                Charts.Remove(chart);
+
+                // Store the redo action to re-add the chart
+                AddToRedoStack(() => AddChart(chart));
+            });
+        }
+
+        public void RemoveChart(ChartViewModelBase chart)
+        {
+            Charts.Remove(chart);
+
+            // Store the undo action to re-add the chart
+            AddToUndoStack(() =>
+            {
+                Charts.Add(chart);
+
+                // Store the redo action to remove the chart
+                AddToRedoStack(() => RemoveChart(chart));
+            });
+        }
+
+        private void Undo()
+        {
+            if (_undoStack.Count > 0)
+            {
+                // Pop the last undo action
+                var undoAction = _undoStack.Pop();
+
+                // Execute the undo action
+                undoAction.Invoke();
+            }
+        }
+
+        private void Redo()
+        {
+            if (_redoStack.Count > 0)
+            {
+                // Pop the last redo action
+                var redoAction = _redoStack.Pop();
+
+                // Execute the redo action
+                redoAction.Invoke();
+            }
+        }
+
         [RelayCommand]
         private void ShowHouseholdWaste()
         {
             var householdData = FoodWasteRecords.Where(f => f.FoodCategory == "Household").ToList();
-            Charts.Add(new BarChartViewModel(householdData)
+            var chart = new BarChartViewModel(householdData)
             {
                 RemoveChartCommand = RemoveChartCommand // Pass the command explicitly
-            });
+            };
+            AddChart(chart);
         }
 
         [RelayCommand]
@@ -62,19 +140,21 @@ namespace HW3_Data_Visualization.ViewModels
                     TotalWaste = g.Sum(f => f.TotalWaste)
                 })
                 .ToList();
-            Charts.Add(new BarChartViewModel(groupedByCountry)
+            var chart = new BarChartViewModel(groupedByCountry)
             {
                 RemoveChartCommand = RemoveChartCommand // Pass the command explicitly
-            });
+            };
+            AddChart(chart);
         }
 
         [RelayCommand]
         private void ShowFoodWaste()
         {
-            Charts.Add(new BarChartViewModel(FoodWasteRecords.ToList())
+            var chart = new BarChartViewModel(FoodWasteRecords.ToList())
             {
                 RemoveChartCommand = RemoveChartCommand // Pass the command explicitly
-            });
+            };
+            AddChart(chart);
         }
 
         [RelayCommand]
@@ -88,10 +168,11 @@ namespace HW3_Data_Visualization.ViewModels
                     TotalWaste = g.Sum(f => f.TotalWaste)
                 })
                 .ToList();
-            Charts.Add(new LineChartViewModel(yearlyData) // Create Line Chart
+            var chart = new LineChartViewModel(yearlyData) // Create Line Chart
             {
                 RemoveChartCommand = RemoveChartCommand
-            });
+            };
+            AddChart(chart);
         }
     }
 }

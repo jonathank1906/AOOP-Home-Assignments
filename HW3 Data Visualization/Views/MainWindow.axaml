@@ -64,6 +64,25 @@
                         Content="Food Waste"
                         FontWeight="SemiBold"
                         Foreground="#015958" />
+
+                    <!-- Undo and Redo Buttons -->
+                    <Button
+                        Margin="0,10"
+                        HorizontalAlignment="Stretch"
+                        Background="#4CAF50"
+                        Command="{Binding UndoCommand}"
+                        Content="Undo"
+                        FontWeight="SemiBold"
+                        Foreground="White" />
+
+                    <Button
+                        Margin="0,10"
+                        HorizontalAlignment="Stretch"
+                        Background="#2196F3"
+                        Command="{Binding RedoCommand}"
+                        Content="Redo"
+                        FontWeight="SemiBold"
+                        Foreground="White" />
                 </StackPanel>
 
                 <!--  Bottom: Footer  -->
