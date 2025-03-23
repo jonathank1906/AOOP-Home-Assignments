@@ -12,8 +12,8 @@
     mc:Ignorable="d">
 
     <DockPanel>
-        <!-- Header with Title and Delete Button -->
-        <DockPanel DockPanel.Dock="Top" Margin="10">
+        <!--  Header with Title and Delete Button  -->
+        <DockPanel Margin="10" DockPanel.Dock="Top">
             <TextBlock
                 Margin="0,0,10,0"
                 DockPanel.Dock="Left"
@@ -21,23 +21,28 @@
                 FontWeight="Bold"
                 Text="{Binding Title}" />
             <Button
+                Padding="0"
                 HorizontalAlignment="Right"
-                Background="#FF4858"
+                Background="Transparent"
+                BorderThickness="0"
                 Command="{Binding RemoveChartCommand}"
                 CommandParameter="{Binding}"
-                Content="Delete"
-                DockPanel.Dock="Right"
-                Foreground="White" />
+                DockPanel.Dock="Right">
+                <Image
+                    Width="32"
+                    Height="32"
+                    Source="{SvgImage /Assets/trash-icon.svg}" />
+            </Button>
         </DockPanel>
 
         <lvc:CartesianChart
-            DockPanel.Dock="Top"
-            CornerRadius="15"
+            MinHeight="400"
             Background="#FFCB9A"
+            CornerRadius="15"
+            DockPanel.Dock="Top"
             Series="{Binding SeriesCollection}"
             XAxes="{Binding XAxes}"
             YAxes="{Binding YAxes}"
-            ZoomMode="Both"
-            MinHeight="400" /> 
+            ZoomMode="Both" />
     </DockPanel>
 </UserControl>
