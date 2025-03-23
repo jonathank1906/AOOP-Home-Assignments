@@ -6,28 +6,27 @@ using SkiaSharp;
 using System.Collections.Generic;
 using HW3_Data_Visualization.Models;
 using System.Linq;
-using System.Windows.Input;
 
-using LiveChartsCore;
-using LiveChartsCore.SkiaSharpView;
-using System.Collections.Generic;
-
-namespace HW3_Data_Visualization.ViewModels
+namespace HW3_Data_Visualization.ViewModels;
+public class BarChartViewModel : ChartViewModelBase
 {
-    public class BarChartViewModel : ChartViewModelBase
+    // Make Title writable by adding a set accessor
+    public override string Title { get; set; }
+
+    public override IEnumerable<ISeries> SeriesCollection { get; }
+
+    public override IEnumerable<Axis> XAxes { get; }
+
+    public override IEnumerable<Axis> YAxes { get; }
+
+    public BarChartViewModel(IEnumerable<FoodWasteData> data, string title = "Bar Chart")
     {
-        public override string Title { get; } = "Bar Chart";
+        // Set the title from the constructor parameter
+        Title = title;
 
-        public override IEnumerable<ISeries> SeriesCollection { get; }
-
-        public override IEnumerable<Axis> XAxes { get; }
-
-        public override IEnumerable<Axis> YAxes { get; }
-
-        public BarChartViewModel(IEnumerable<FoodWasteData> data)
+        // Initialize the series collection
+        SeriesCollection = new[]
         {
-            SeriesCollection = new[]
-            {
                 new ColumnSeries<double>
                 {
                     Values = data.Select(d => d.TotalWaste).ToArray(),
@@ -35,15 +34,16 @@ namespace HW3_Data_Visualization.ViewModels
                 }
             };
 
-            XAxes = new[]
-            {
+        // Initialize the X-axis
+        XAxes = new[]
+        {
                 new Axis { Labels = data.Select(d => d.FoodCategory).ToArray() }
             };
 
-            YAxes = new[]
-            {
+        // Initialize the Y-axis
+        YAxes = new[]
+        {
                 new Axis { Labeler = value => $"{value:N0} Tons" }
             };
-        }
     }
 }

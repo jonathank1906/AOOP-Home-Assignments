@@ -22,19 +22,20 @@
             BorderThickness="0,0,1,0">
 
             <DockPanel LastChildFill="True">
-                 <StackPanel DockPanel.Dock="Top" VerticalAlignment="Top">
-                    <TextBlock Text="Preset Queries"
-                    FontWeight="Bold"
-                    FontSize="20"
-                    Foreground="White"
-                    Margin="0 0 0 20"/>
+                <StackPanel VerticalAlignment="Top" DockPanel.Dock="Top">
+                    <TextBlock
+                        Margin="0,0,0,20"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Text="Preset Queries" />
 
                     <Button
                         Margin="0,10"
                         HorizontalAlignment="Stretch"
                         Background="White"
-                        Command="{Binding ShowHouseholdWasteCommand}"
-                        Content="Household Waste"
+                        Command="{Binding ShowWasteByFoodCategoryOverTimeCommand}"
+                        Content="Waste by Food Category Over Time"
                         FontWeight="SemiBold"
                         Foreground="#015958" />
 
@@ -51,8 +52,8 @@
                         Margin="0,10"
                         HorizontalAlignment="Stretch"
                         Background="White"
-                        Command="{Binding ShowYearlyWasteTrendCommand}"
-                        Content="Yearly Waste Trend"
+                        Command="{Binding ShowTotalWasteOverTimeCommand}"
+                        Content="Total Waste Over Time"
                         FontWeight="SemiBold"
                         Foreground="#015958" />
 
@@ -65,7 +66,7 @@
                         FontWeight="SemiBold"
                         Foreground="#015958" />
 
-                    <!-- Undo and Redo Buttons -->
+                    <!--  Undo and Redo Buttons  -->
                     <Button
                         Margin="0,10"
                         HorizontalAlignment="Stretch"
@@ -86,14 +87,15 @@
                 </StackPanel>
 
                 <!--  Bottom: Footer  -->
-                 <TextBlock Text="Powered by Genius Engineers"
-                   DockPanel.Dock="Bottom"
-                   Foreground="White"
-                   FontSize="12"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Bottom"
-                   Margin="0 30 0 0"
-                   Opacity="0.7"/>
+                <TextBlock
+                    Margin="0,30,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    DockPanel.Dock="Bottom"
+                    FontSize="12"
+                    Foreground="White"
+                    Opacity="0.7"
+                    Text="Powered by Genius Engineers" />
             </DockPanel>
         </Border>
 

@@ -1,19 +1,16 @@
-using CommunityToolkit.Mvvm.ComponentModel; // For ObservableProperty and ViewModelBase
-using LiveChartsCore; // For ISeries, Axis, and LineSeries
-using LiveChartsCore.SkiaSharpView; // For SkiaSharp-based LiveCharts functionality
-using LiveChartsCore.SkiaSharpView.Painting; // For SolidColorPaint
-using SkiaSharp; // For SKColors (used in painting)
-using System.Collections.Generic; // For List<T>
-using System.Linq; // For LINQ methods like GroupBy and Select
-using HW3_Data_Visualization.Models; // Assuming FoodWasteData is in this namespace
-using System.Windows.Input; // For ICommand
-
+using CommunityToolkit.Mvvm.ComponentModel;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using System.Collections.Generic;
+using HW3_Data_Visualization.Models;
+using System.Linq;
 
 namespace HW3_Data_Visualization.ViewModels
 {
     public class LineChartViewModel : ChartViewModelBase
     {
-        public override string Title { get; } = "Line Chart";
+        // Override the Title property with a set accessor
+        public override string Title { get; set; }
 
         public override IEnumerable<ISeries> SeriesCollection { get; }
 
@@ -21,27 +18,40 @@ namespace HW3_Data_Visualization.ViewModels
 
         public override IEnumerable<Axis> YAxes { get; }
 
-        public LineChartViewModel(IEnumerable<FoodWasteData> data)
+        public LineChartViewModel(IEnumerable<FoodWasteData> data, string title = "Line Chart")
         {
+            // Set the title from the constructor parameter
+            Title = title;
+
+            // Group data by FoodCategory and create a series for each category
             var groupedData = data
-                .GroupBy(d => d.FoodCategory)
-                .Select(g => new { Category = g.Key, TotalWaste = g.Sum(d => d.TotalWaste) })
+                .GroupBy(f => f.FoodCategory)
+                .Select(g => new
+                {
+                    FoodCategory = g.Key,
+                    Values = g.OrderBy(f => f.Year).Select(f => f.TotalWaste).ToArray(),
+                    Years = g.OrderBy(f => f.Year).Select(f => f.Year.ToString()).ToArray()
+                })
                 .ToList();
 
-            SeriesCollection = new[]
+            // Initialize the series collection
+            SeriesCollection = groupedData.Select(g => new LineSeries<double>
             {
-                new LineSeries<double>
+                Values = g.Values,
+                Name = g.FoodCategory // Use FoodCategory as the series name
+            }).ToList();
+
+            // Initialize the X-axis with Years as labels
+            XAxes = new[]
+            {
+                new Axis
                 {
-                    Values = groupedData.Select(g => g.TotalWaste).ToArray(),
-                    Name = "Waste Trend"
+                    Labels = groupedData.FirstOrDefault()?.Years, // Use Years for X-axis labels
+                    Labeler = value => value.ToString("N0") // Format the labels as integers
                 }
             };
 
-            XAxes = new[]
-            {
-                new Axis { Labels = groupedData.Select(g => g.Category).ToArray() }
-            };
-
+            // Initialize the Y-axis
             YAxes = new[]
             {
                 new Axis { Labeler = value => $"{value:N0} Tons" }
