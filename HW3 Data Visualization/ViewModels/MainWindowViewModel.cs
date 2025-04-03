@@ -247,4 +247,26 @@ private void ShowEconomicLossByCountry()
     };
     AddChart(chart);
 }
+
+[RelayCommand]
+private void ShowHouseholdWastePieChart()
+{
+    var categoryAverages = FoodWasteRecords
+        .GroupBy(f => f.FoodCategory)
+        .Select(g => new FoodWasteData
+        {
+            FoodCategory = g.Key,
+            HouseholdWastePercentage = g.Average(f => f.HouseholdWastePercentage)
+        })
+        .Where(f => f.HouseholdWastePercentage > 0)
+        .ToList();
+
+    var chart = new PieChartViewModel(categoryAverages, "Avg Household Waste % by Category")
+    {
+        RemoveChartCommand = RemoveChartCommand
+    };
+    AddChart(chart);
+}
+
+
 }

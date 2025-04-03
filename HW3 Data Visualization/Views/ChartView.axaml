@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:HW3_Data_Visualization.ViewModels"
+    xmlns:vm="clr-namespace:HW3_Data_Visualization.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="vm:ChartViewModelBase"
@@ -35,14 +35,36 @@
             </Button>
         </DockPanel>
 
+        <ContentControl>
+    <ContentControl.Styles>
+        <Style Selector="ContentControl">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SeriesCollection}" Value="{x:Null}">
+                    <Setter Property="IsVisible" Value="False"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </ContentControl.Styles>
+
+    <ContentControl.Content>
         <lvc:CartesianChart
-            MinHeight="400"
+            x:Name="Cartesian"
             Background="#FFCB9A"
             CornerRadius="15"
-            DockPanel.Dock="Top"
+            MinHeight="400"
             Series="{Binding SeriesCollection}"
             XAxes="{Binding XAxes}"
             YAxes="{Binding YAxes}"
             ZoomMode="Both" />
+
+        <lvc:PieChart
+            x:Name="Pie"
+            Background="#FFCB9A"
+            CornerRadius="15"
+            MinHeight="400"
+            Series="{Binding SeriesCollection}" />
+    </ContentControl.Content>
+</ContentControl>
+
     </DockPanel>
 </UserControl>
