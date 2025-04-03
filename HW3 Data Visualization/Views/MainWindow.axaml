@@ -67,6 +67,16 @@
                         FontWeight="SemiBold"
                         Foreground="#015958" />
 
+                    <Button
+                        Margin="0,10"
+                        HorizontalAlignment="Stretch"
+                        Background="White"
+                        Command="{Binding ShowEconomicLossByCountryCommand}"
+                        Content="Economic Loss by Country"
+                        FontWeight="SemiBold"
+                        Foreground="#015958" />
+
+
                     <!--  Undo and Redo Buttons  -->
                     <StackPanel
                         Margin="0,10"

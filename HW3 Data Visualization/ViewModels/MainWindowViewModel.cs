@@ -228,4 +228,23 @@ public partial class MainWindowViewModel : ViewModelBase
         };
         AddChart(chart);
     }
+
+    [RelayCommand]
+private void ShowEconomicLossByCountry()
+{
+    var economicLossByCountry = FoodWasteRecords
+        .GroupBy(f => f.Country)
+        .Select(g => new FoodWasteData
+        {
+            FoodCategory = g.Key, // Using Country as label
+            EconomicLoss = g.Sum(f => f.EconomicLoss)
+        })
+        .ToList();
+
+    var chart = new BarChartViewModel(economicLossByCountry, "Economic Loss by Country")
+    {
+        RemoveChartCommand = RemoveChartCommand
+    };
+    AddChart(chart);
+}
 }
