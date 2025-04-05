@@ -130,26 +130,27 @@
         </Border>
 
 
-        <!--  Dashboard  -->
+         <!-- Right Panel: Dashboard -->
         <ScrollViewer
             Grid.Column="1"
             Padding="20"
-            Background="#2C3532">
-            <ItemsControl ItemsSource="{Binding Charts}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <views:ChartView DataContext="{Binding}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
+            Background="#2C3532"
+            VerticalScrollBarVisibility="Auto">
 
-                <!--  charts  -->
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical" Spacing="20" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
+            <StackPanel Orientation="Vertical" Spacing="20">
+                <ItemsControl ItemsSource="{Binding Charts}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <views:ChartView DataContext="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Bottom Spacer to prevent chart cut-off -->
+                <Border Height="40"/>
+            </StackPanel>
         </ScrollViewer>
+        
 
     </Grid>
 </Window>
