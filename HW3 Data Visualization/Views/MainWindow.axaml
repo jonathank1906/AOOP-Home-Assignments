@@ -72,7 +72,7 @@
                         HorizontalAlignment="Stretch"
                         Background="White"
                         Command="{Binding ShowHouseholdWastePieChartCommand}"
-                        Content="Household Waste Pie Chart"
+                        Content="Household Waste Percentage"
                         FontWeight="SemiBold"
                         Foreground="#015958" />
 
