@@ -15,125 +15,124 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly CsvService _csvService;
 
     public ObservableCollection<ChartViewModelBase> Charts { get; } = new();
-
     public ObservableCollection<FoodWasteData> FoodWasteRecords { get; set; } = new();
 
     public IRelayCommand<ChartViewModelBase> RemoveChartCommand { get; }
-
     public IRelayCommand UndoCommand { get; }
     public IRelayCommand RedoCommand { get; }
 
-    private readonly Stack<Action> _undoStack = new();
-    private readonly Stack<Action> _redoStack = new();
-
-    private bool _lastOperationWasUndo = false;
+    private readonly Stack<IUndoableAction> _undoStack = new();
+    private readonly Stack<IUndoableAction> _redoStack = new();
 
     public MainWindowViewModel()
     {
         _csvService = new CsvService();
         LoadCsvData();
 
-        // Initialize RemoveChartCommand to handle any ChartViewModelBase
         RemoveChartCommand = new RelayCommand<ChartViewModelBase>(chart =>
         {
-            if (chart != null)
-            {
-                RemoveChart(chart);
-            }
+            if (chart != null) RemoveChart(chart);
         });
 
-        // Initialize Undo and Redo commands (always enabled)
-        UndoCommand = new RelayCommand(Undo);
-        RedoCommand = new RelayCommand(Redo);
+        UndoCommand = new RelayCommand(Undo, () => _undoStack.Count > 0);
+        RedoCommand = new RelayCommand(Redo, () => _redoStack.Count > 0);
     }
 
-    private void LoadCsvData()
+    private interface IUndoableAction
     {
-        var filePath = "Assets/global_food_wastage_dataset.csv";  // The relative path to the CSV file
-        var data = _csvService.LoadData(filePath);
-        FoodWasteRecords = new ObservableCollection<FoodWasteData>(data);
-
-        // Debug: Check the loaded data
-        Console.WriteLine($"Loaded {FoodWasteRecords.Count} records.");
-        foreach (var record in FoodWasteRecords.Take(5))
-        {
-            Console.WriteLine($"FoodCategory: {record.FoodCategory}, Country: {record.Country}, TotalWaste: {record.TotalWaste}, Year: {record.Year}");
-        }
+        void Execute();
+        void Undo();
     }
 
-    private void AddToUndoStack(Action undoAction)
+    private class ChartAction : IUndoableAction
     {
-        // Push the new undo action onto the stack
-        _undoStack.Push(undoAction);
+        private readonly MainWindowViewModel _vm;
+        private readonly ChartViewModelBase _chart;
+        private readonly bool _isAddAction;
 
-        // Clear the redo stack only when a new action is performed after an undo
-        if (!_lastOperationWasUndo)
+        public ChartAction(MainWindowViewModel vm, ChartViewModelBase chart, bool isAddAction)
         {
-            _redoStack.Clear();
+            _vm = vm;
+            _chart = chart;
+            _isAddAction = isAddAction;
         }
 
-        _lastOperationWasUndo = false;
-    }
+        public void Execute()
+        {
+            if (_isAddAction)
+            {
+                _vm.Charts.Add(_chart);
+            }
+            else
+            {
+                _vm.Charts.Remove(_chart);
+            }
+        }
 
-    private void AddToRedoStack(Action redoAction)
-    {
-        _redoStack.Push(redoAction);
+        public void Undo()
+        {
+            if (_isAddAction)
+            {
+                _vm.Charts.Remove(_chart);
+            }
+            else
+            {
+                _vm.Charts.Add(_chart);
+            }
+        }
     }
 
     public void AddChart(ChartViewModelBase chart)
     {
-        Charts.Add(chart);
-
-        // Store the undo action to remove the chart
-        AddToUndoStack(() =>
-        {
-            Charts.Remove(chart);
-
-            // Store the redo action to re-add the chart
-            AddToRedoStack(() => AddChart(chart));
-        });
+        var action = new ChartAction(this, chart, true);
+        action.Execute();
+        _undoStack.Push(action);
+        _redoStack.Clear();
+        UpdateCommandStates();
     }
 
     public void RemoveChart(ChartViewModelBase chart)
     {
-        Charts.Remove(chart);
-
-        // Store the undo action to re-add the chart
-        AddToUndoStack(() =>
-        {
-            Charts.Add(chart);
-
-            // Store the redo action to remove the chart
-            AddToRedoStack(() => RemoveChart(chart));
-        });
+        var action = new ChartAction(this, chart, false);
+        action.Execute();
+        _undoStack.Push(action);
+        _redoStack.Clear();
+        UpdateCommandStates();
     }
 
     private void Undo()
     {
-        if (_undoStack.Count > 0)
-        {
-            // Pop the last undo action
-            var undoAction = _undoStack.Pop();
-
-            // Execute the undo action
-            undoAction.Invoke();
-
-            _lastOperationWasUndo = true;
-        }
+        if (_undoStack.Count == 0) return;
+        
+        var action = _undoStack.Pop();
+        action.Undo();
+        _redoStack.Push(action);
+        UpdateCommandStates();
     }
 
     private void Redo()
     {
-        if (_redoStack.Count > 0)
-        {
-            // Pop the last redo action
-            var redoAction = _redoStack.Pop();
+        if (_redoStack.Count == 0) return;
+        
+        var action = _redoStack.Pop();
+        action.Execute();
+        _undoStack.Push(action);
+        UpdateCommandStates();
+    }
 
-            // Execute the redo action
-            redoAction.Invoke();
+    private void UpdateCommandStates()
+    {
+        UndoCommand.NotifyCanExecuteChanged();
+        RedoCommand.NotifyCanExecuteChanged();
+    }
 
-            _lastOperationWasUndo = false;
-        }
+    private void LoadCsvData()
+    {
+        var filePath = "Assets/global_food_wastage_dataset.csv";
+        var data = _csvService.LoadData(filePath);
+        FoodWasteRecords = new ObservableCollection<FoodWasteData>(data);
+
+        Console.WriteLine($"Loaded {FoodWasteRecords.Count} records.");
     }
 
     [RelayCommand]
