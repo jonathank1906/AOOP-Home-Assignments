@@ -1,93 +1,156 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:HW3_Data_Visualization.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:views="clr-namespace:HW3_Data_Visualization.Views"
-        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
-        x:Class="HW3_Data_Visualization.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="Global Food Waste Dashboard">
+<Window
+    x:Class="HW3_Data_Visualization.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="clr-namespace:HW3_Data_Visualization.Views"
+    xmlns:vm="clr-namespace:HW3_Data_Visualization.ViewModels"
+    Title="Global Food Waste Dashboard"
+    d:DesignHeight="600"
+    d:DesignWidth="1000"
+    x:DataType="vm:MainWindowViewModel"
+    Icon="/Assets/app-icon.ico"
+    mc:Ignorable="d"
+    WindowState="Maximized">
 
     <Grid ColumnDefinitions="250, *" RowDefinitions="*">
 
-        <Border Grid.Column="0"
-        Background="#6A0DAD"
-        Padding="20"
-        BorderThickness="0 0 1 0">
+        <Border
+            Grid.Column="0"
+            Padding="20"
+            Background="#008F8C"
+            BorderThickness="0,0,1,0">
 
-    <DockPanel LastChildFill="True">
+            <DockPanel LastChildFill="True">
+                <StackPanel VerticalAlignment="Top" DockPanel.Dock="Top">
+                    <TextBlock
+                        Margin="0,0,0,20"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Text="Preset Queries" />
 
-                <!-- Top part: Buttons -->
-        <StackPanel DockPanel.Dock="Top" VerticalAlignment="Top">
-            <TextBlock Text="Preset Queries"
-                    FontWeight="Bold"
-                    FontSize="20"
+                    <Button
+                        Margin="0,10"
+                        HorizontalAlignment="Stretch"
+                        Background="White"
+                        Command="{Binding ShowWasteByFoodCategoryOverTimeCommand}"
+                        Content="Waste by Food Category Over Time"
+                        FontWeight="SemiBold"
+                        Foreground="#015958" />
+
+                    <Button
+                        Margin="0,10"
+                        HorizontalAlignment="Stretch"
+                        Background="White"
+                        Command="{Binding ShowWasteByCountryCommand}"
+                        Content="Waste by Country"
+                        FontWeight="SemiBold"
+                        Foreground="#015958" />
+
+                    <Button
+                        Margin="0,10"
+                        HorizontalAlignment="Stretch"
+                        Background="White"
+                        Command="{Binding ShowTotalWasteOverTimeCommand}"
+                        Content="Total Waste Over Time"
+                        FontWeight="SemiBold"
+                        Foreground="#015958" />
+
+                    <Button
+                        Margin="0,10"
+                        HorizontalAlignment="Stretch"
+                        Background="White"
+                        Command="{Binding ShowFoodWasteCommand}"
+                        Content="Food Waste"
+                        FontWeight="SemiBold"
+                        Foreground="#015958" />
+
+                        <Button
+                        Margin="0,10"
+                        HorizontalAlignment="Stretch"
+                        Background="White"
+                        Command="{Binding ShowHouseholdWastePieChartCommand}"
+                        Content="Household Waste Percentage"
+                        FontWeight="SemiBold"
+                        Foreground="#015958" />
+
+
+                    <Button
+                        Margin="0,10"
+                        HorizontalAlignment="Stretch"
+                        Background="White"
+                        Command="{Binding ShowEconomicLossByCountryCommand}"
+                        Content="Economic Loss by Country"
+                        FontWeight="SemiBold"
+                        Foreground="#015958" />
+
+
+                    <!--  Undo and Redo Buttons  -->
+                    <StackPanel
+                        Margin="0,10"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                        <Button
+                            Margin="0,0,15,0"
+                            Background="White"
+                            Classes="iconButton"
+                            Command="{Binding UndoCommand}">
+                            <Image
+                                Width="25"
+                                Height="25"
+                                Source="{SvgImage /Assets/undo.svg}" />
+                        </Button>
+
+                        <Button
+                            Margin="15,0,0,0"
+                            Background="White"
+                            Classes="iconButton"
+                            Command="{Binding RedoCommand}">
+                            <Image
+                                Width="25"
+                                Height="25"
+                                Source="{SvgImage /Assets/redo.svg}" />
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+
+                <!--  Bottom: Footer  -->
+                <TextBlock
+                    Margin="0,30,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    DockPanel.Dock="Bottom"
+                    FontSize="12"
                     Foreground="White"
-                    Margin="0 0 0 20"/>
+                    Opacity="0.7"
+                    Text="Powered by Genius Engineers" />
+            </DockPanel>
+        </Border>
 
-            <StackPanel Width="200"> 
-                <Button Content="Household Waste"
-                        Margin="0 10"
-                        Background="White"
-                        Foreground="#6A0DAD"
-                        FontWeight="SemiBold"
-                        HorizontalAlignment="Stretch"/>
 
-                <Button Content="Waste by Country"
-                        Margin="0 10"
-                        Background="White"
-                        Foreground="#6A0DAD"
-                        FontWeight="SemiBold"
-                        HorizontalAlignment="Stretch"/>
+         <!-- Right Panel: Dashboard -->
+        <ScrollViewer
+            Grid.Column="1"
+            Padding="20"
+            Background="#2C3532"
+            VerticalScrollBarVisibility="Auto">
 
-                <Button Content="Yearly Waste Trend"
-                        Margin="0 10"
-                        Background="White"
-                        Foreground="#6A0DAD"
-                        FontWeight="SemiBold"
-                        HorizontalAlignment="Stretch"/>
+            <StackPanel Orientation="Vertical" Spacing="20">
+                <ItemsControl ItemsSource="{Binding Charts}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <views:ChartView DataContext="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-                <Button Content="Food Waste"
-                        Margin="0 10"
-                        Background="White"
-                        Foreground="#6A0DAD"
-                        FontWeight="SemiBold"
-                        HorizontalAlignment="Stretch"/>
+                <!-- Bottom Spacer to prevent chart cut-off -->
+                <Border Height="40"/>
             </StackPanel>
-        </StackPanel>
-
-        <!-- Bottom: Footer -->
-        <TextBlock Text="Powered by Genius Engineers"
-                   DockPanel.Dock="Bottom"
-                   Foreground="White"
-                   FontSize="12"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Bottom"
-                   Margin="0 30 0 0"
-                   Opacity="0.7"/>
-    </DockPanel>
-</Border>
-
-
-        <!-- Dashboard -->
-        <ScrollViewer Grid.Column="1" Padding="20" Background="#F1E6FF">
-            <ItemsControl ItemsSource="{Binding Charts}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <views:ChartView DataContext="{Binding}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-
-                <!-- charts -->
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical" Spacing="20"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
         </ScrollViewer>
+        
 
     </Grid>
 </Window>

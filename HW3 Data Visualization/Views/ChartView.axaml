@@ -1,18 +1,64 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:HW3_Data_Visualization.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="HW3_Data_Visualization.Views.ChartView"
-             x:DataType="vm:ChartViewModel">
+<UserControl
+    x:Class="HW3_Data_Visualization.Views.ChartView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:HW3_Data_Visualization.ViewModels"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:ChartViewModelBase"
+    mc:Ignorable="d">
 
+    <DockPanel>
+        <!--  Header with Title and Delete Button  -->
+        <DockPanel Margin="10" DockPanel.Dock="Top">
+            <TextBlock
+                Margin="0,0,10,0"
+                DockPanel.Dock="Left"
+                FontSize="16"
+                FontWeight="Bold"
+                Text="{Binding Title}" />
+            <Button
+                Padding="0"
+                HorizontalAlignment="Right"
+                Background="Transparent"
+                BorderThickness="0"
+                Command="{Binding RemoveChartCommand}"
+                CommandParameter="{Binding}"
+                DockPanel.Dock="Right">
+                <Image
+                    Width="32"
+                    Height="32"
+                    Source="{SvgImage /Assets/trash-icon.svg}" />
+            </Button>
+        </DockPanel>
 
- <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="10">
-    <StackPanel>
-      <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="16" Margin="0 0 0 10"/>
-      <!-- Placeholder - charts will be here -->
-      <TextBlock Text="(Chart will render here)" Foreground="Gray" HorizontalAlignment="Center" Margin="0 20"/>
-    </StackPanel>
-  </Border>
+        <!-- Dynamic Chart Rendering -->
+    <!-- Dynamic Chart Rendering -->
+<ContentControl Content="{Binding}">
+    <ContentControl.DataTemplates>
+        <DataTemplate DataType="vm:PieChartViewModel">
+            <lvc:PieChart
+                Background="#FFCB9A"
+                CornerRadius="15"
+                MinHeight="400"
+                Series="{Binding SeriesCollection}" />
+        </DataTemplate>
+
+        <DataTemplate DataType="vm:ChartViewModelBase">
+            <lvc:CartesianChart
+                Background="#FFCB9A"
+                CornerRadius="15"
+                MinHeight="400"
+                Series="{Binding SeriesCollection}"
+                XAxes="{Binding XAxes}"
+                YAxes="{Binding YAxes}"
+                ZoomMode="Both" />
+        </DataTemplate>
+    </ContentControl.DataTemplates>
+</ContentControl>
+
+    </DockPanel>
 </UserControl>
