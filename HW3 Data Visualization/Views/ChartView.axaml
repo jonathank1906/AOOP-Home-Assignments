@@ -35,35 +35,29 @@
             </Button>
         </DockPanel>
 
-        <ContentControl>
-    <ContentControl.Styles>
-        <Style Selector="ContentControl">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding SeriesCollection}" Value="{x:Null}">
-                    <Setter Property="IsVisible" Value="False"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </ContentControl.Styles>
+        <!-- Dynamic Chart Rendering -->
+    <!-- Dynamic Chart Rendering -->
+<ContentControl Content="{Binding}">
+    <ContentControl.DataTemplates>
+        <DataTemplate DataType="vm:PieChartViewModel">
+            <lvc:PieChart
+                Background="#FFCB9A"
+                CornerRadius="15"
+                MinHeight="400"
+                Series="{Binding SeriesCollection}" />
+        </DataTemplate>
 
-    <ContentControl.Content>
-        <lvc:CartesianChart
-            x:Name="Cartesian"
-            Background="#FFCB9A"
-            CornerRadius="15"
-            MinHeight="400"
-            Series="{Binding SeriesCollection}"
-            XAxes="{Binding XAxes}"
-            YAxes="{Binding YAxes}"
-            ZoomMode="Both" />
-
-        <lvc:PieChart
-            x:Name="Pie"
-            Background="#FFCB9A"
-            CornerRadius="15"
-            MinHeight="400"
-            Series="{Binding SeriesCollection}" />
-    </ContentControl.Content>
+        <DataTemplate DataType="vm:ChartViewModelBase">
+            <lvc:CartesianChart
+                Background="#FFCB9A"
+                CornerRadius="15"
+                MinHeight="400"
+                Series="{Binding SeriesCollection}"
+                XAxes="{Binding XAxes}"
+                YAxes="{Binding YAxes}"
+                ZoomMode="Both" />
+        </DataTemplate>
+    </ContentControl.DataTemplates>
 </ContentControl>
 
     </DockPanel>
