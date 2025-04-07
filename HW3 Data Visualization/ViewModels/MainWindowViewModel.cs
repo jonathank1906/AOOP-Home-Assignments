@@ -103,7 +103,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private void Undo()
     {
         if (_undoStack.Count == 0) return;
-        
+
         var action = _undoStack.Pop();
         action.Undo();
         _redoStack.Push(action);
@@ -113,7 +113,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private void Redo()
     {
         if (_redoStack.Count == 0) return;
-        
+
         var action = _redoStack.Pop();
         action.Execute();
         _undoStack.Push(action);
@@ -229,43 +229,41 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-private void ShowEconomicLossByCountry()
-{
-    var economicLossByCountry = FoodWasteRecords
-        .GroupBy(f => f.Country)
-        .Select(g => new FoodWasteData
-        {
-            FoodCategory = g.Key, // Using Country as label
-            EconomicLoss = g.Sum(f => f.EconomicLoss)
-        })
-        .ToList();
-
-    var chart = new BarChartViewModel(economicLossByCountry, "Economic Loss by Country")
+    private void ShowEconomicLossByCountry()
     {
-        RemoveChartCommand = RemoveChartCommand
-    };
-    AddChart(chart);
-}
+        var economicLossByCountry = FoodWasteRecords
+            .GroupBy(f => f.Country)
+            .Select(g => new FoodWasteData
+            {
+                FoodCategory = g.Key, // Using Country as label
+                EconomicLoss = g.Sum(f => f.EconomicLoss)
+            })
+            .ToList();
 
-[RelayCommand]
-private void ShowHouseholdWastePieChart()
-{
-    var categoryAverages = FoodWasteRecords
-        .GroupBy(f => f.FoodCategory)
-        .Select(g => new FoodWasteData
+        var chart = new BarChartViewModel(economicLossByCountry, "Economic Loss by Country")
         {
-            FoodCategory = g.Key,
-            HouseholdWastePercentage = g.Average(f => f.HouseholdWastePercentage)
-        })
-        .Where(f => f.HouseholdWastePercentage > 0)
-        .ToList();
+            RemoveChartCommand = RemoveChartCommand
+        };
+        AddChart(chart);
+    }
 
-    var chart = new PieChartViewModel(categoryAverages, "Avg Household Waste % by Category")
+    [RelayCommand]
+    private void ShowHouseholdWastePieChart()
     {
-        RemoveChartCommand = RemoveChartCommand
-    };
-    AddChart(chart);
-}
+        var categoryAverages = FoodWasteRecords
+            .GroupBy(f => f.FoodCategory)
+            .Select(g => new FoodWasteData
+            {
+                FoodCategory = g.Key,
+                HouseholdWastePercentage = g.Average(f => f.HouseholdWastePercentage)
+            })
+            .Where(f => f.HouseholdWastePercentage > 0)
+            .ToList();
 
-
+        var chart = new PieChartViewModel(categoryAverages, "Avg Household Waste % by Category")
+        {
+            RemoveChartCommand = RemoveChartCommand
+        };
+        AddChart(chart);
+    }
 }

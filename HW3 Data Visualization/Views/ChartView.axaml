@@ -35,30 +35,28 @@
             </Button>
         </DockPanel>
 
-        <!-- Dynamic Chart Rendering -->
-    <!-- Dynamic Chart Rendering -->
-<ContentControl Content="{Binding}">
-    <ContentControl.DataTemplates>
-        <DataTemplate DataType="vm:PieChartViewModel">
-            <lvc:PieChart
-                Background="#FFCB9A"
-                CornerRadius="15"
-                MinHeight="400"
-                Series="{Binding SeriesCollection}" />
-        </DataTemplate>
+        <!--  Dynamic Chart Rendering  -->
+        <ContentControl Content="{Binding}">
+            <ContentControl.DataTemplates>
+                <DataTemplate DataType="vm:PieChartViewModel">
+                    <lvc:PieChart
+                        MinHeight="400"
+                        Background="#FFCB9A"
+                        CornerRadius="15"
+                        Series="{Binding SeriesCollection}" />
+                </DataTemplate>
 
-        <DataTemplate DataType="vm:ChartViewModelBase">
-            <lvc:CartesianChart
-                Background="#FFCB9A"
-                CornerRadius="15"
-                MinHeight="400"
-                Series="{Binding SeriesCollection}"
-                XAxes="{Binding XAxes}"
-                YAxes="{Binding YAxes}"
-                ZoomMode="Both" />
-        </DataTemplate>
-    </ContentControl.DataTemplates>
-</ContentControl>
-
+                <DataTemplate DataType="vm:ChartViewModelBase">
+                    <lvc:CartesianChart
+                        MinHeight="400"
+                        Background="#FFCB9A"
+                        CornerRadius="15"
+                        Series="{Binding SeriesCollection}"
+                        XAxes="{Binding XAxes}"
+                        YAxes="{Binding YAxes}"
+                        ZoomMode="Both" />
+                </DataTemplate>
+            </ContentControl.DataTemplates>
+        </ContentControl>
     </DockPanel>
 </UserControl>

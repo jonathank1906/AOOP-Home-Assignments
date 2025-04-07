@@ -11,17 +11,15 @@
     d:DesignWidth="1000"
     x:DataType="vm:MainWindowViewModel"
     Icon="/Assets/app-icon.ico"
-    mc:Ignorable="d"
-    WindowState="Maximized">
+    WindowState="Maximized"
+    mc:Ignorable="d">
 
     <Grid ColumnDefinitions="250, *" RowDefinitions="*">
-
         <Border
             Grid.Column="0"
             Padding="20"
             Background="#008F8C"
             BorderThickness="0,0,1,0">
-
             <DockPanel LastChildFill="True">
                 <StackPanel VerticalAlignment="Top" DockPanel.Dock="Top">
                     <TextBlock
@@ -67,7 +65,7 @@
                         FontWeight="SemiBold"
                         Foreground="#015958" />
 
-                        <Button
+                    <Button
                         Margin="0,10"
                         HorizontalAlignment="Stretch"
                         Background="White"
@@ -75,7 +73,6 @@
                         Content="Household Waste Percentage"
                         FontWeight="SemiBold"
                         Foreground="#015958" />
-
 
                     <Button
                         Margin="0,10"
@@ -130,7 +127,7 @@
         </Border>
 
 
-         <!-- Right Panel: Dashboard -->
+        <!--  Right Panel: Dashboard  -->
         <ScrollViewer
             Grid.Column="1"
             Padding="20"
@@ -146,11 +143,9 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <!-- Bottom Spacer to prevent chart cut-off -->
-                <Border Height="40"/>
+                <!--  Bottom Spacer to prevent chart cut-off  -->
+                <Border Height="40" />
             </StackPanel>
         </ScrollViewer>
-        
-
     </Grid>
 </Window>
